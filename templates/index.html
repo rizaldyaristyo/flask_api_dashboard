@@ -6,5 +6,18 @@
 <body>
     <h1>Welcome</h1>
     <a href="/dashboard">Go To dashboard</a>
+    <h2>last_trash_pickup</h2>
+    <p id="last_trash_pickup"></p>
 </body>
+
+<script>
+            fetch(window.location.protocol + "//" + window.location.host + "/".concat("get_last_trash_pickup?trash_can_id=1"), {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                const last_trash_pickup = data.last_trash_pickup;
+                document.getElementById('last_trash_pickup').textContent = last_trash_pickup;
+            });
+</script>
 </html>

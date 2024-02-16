@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Skripsi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        .container-fluid {
+            height: 93%;
+            display: flex;
+        }
+        .row {
+            flex: 1;
+        }
+        @media screen and (max-width: 768px) {
+            .container-fluid {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Gas & Trash Cap Monitor</a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" aria-current="page">
+                            <svg class="bi me-5" width="10" height="16"><use xlink:href="#home"></use></svg>
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi me-5" width="10" height="16"><use xlink:href="#speedometer2"></use></svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi me-5" width="10" height="16"><use xlink:href="#table"></use></svg>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi me-5" width="10" height="16"><use xlink:href="#grid"></use></svg>
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link text-white">
+                            <svg class="bi me-5" width="10" height="16"><use xlink:href="#people-circle"></use></svg>
+                            Customers
+                        </a>
+                    </li>
+                </ul>
+                <hr>
+                <div>
+                    <p>© 2023</p>
+                </div>
+            </nav>
+
+            <style>
+                .charts {
+                    max-width: 50%;
+                }
+                .main-body {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+                @media only screen and (max-width: 1060px) {
+                    .charts {
+                        max-width: 100%;
+                    }
+                }
+            </style>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 main-body">
+                <h2>Grafik Trashcan 1</h2>
+                <canvas id="chart1nya" class="charts"></canvas>
+                <h2>Grafik Trashcan 2</h2>
+                <canvas id="chart2nya" class="charts"></canvas>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <script>       
+        function updateGraph() {
+            var baseUrl = window.location.protocol + "//" + window.location.host + "/";
+            fetch(baseUrl.concat("get_data?trash_can_id=1"), {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.data_date;
+                const gasPPMs = data.gas_ppms;
+                const trashCapacities = data.trash_capacities;
+                chart1nya.data.labels = labels;
+                chart1nya.data.datasets[0].data = gasPPMs;
+                chart1nya.data.datasets[1].data = trashCapacities;
+
+                // Update the chart
+                chart1nya.update();
+            });
+
+            fetch(baseUrl.concat("get_data?trash_can_id=2"), {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.data_date;
+                const gasPPMs = data.gas_ppms;
+                const trashCapacities = data.trash_capacities;
+                chart2nya.data.labels = labels;
+                chart2nya.data.datasets[0].data = gasPPMs;
+                chart2nya.data.datasets[1].data = trashCapacities;
+
+                // Update the chart
+                chart2nya.update();
+            });
+        }
+        updateGraph();
+        setInterval(updateGraph, 2000);
+
+        var ctx1 = document.getElementById('chart1nya').getContext('2d');
+        var chart1nya = new Chart(ctx1, {
+            type: 'line', data: {labels: [], datasets: [{ label: 'Ammonia Gas (ppm)', data: [], borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 2, fill: false,}, {label: 'Trash Capacities (%)',data: [],borderColor: 'rgba(75, 192, 192, 1)',borderWidth: 2,fill: false,}]}, options: {scales: {x: {type: 'time',time: {unit: 'minute'}},y: {}}}
+        });
+        var ctx2 = document.getElementById('chart2nya').getContext('2d');
+        var chart2nya = new Chart(ctx2, {
+            type: 'line', data: {labels: [], datasets: [{ label: 'Ammonia Gas (ppm)', data: [], borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 2, fill: false,}, {label: 'Trash Capacities (%)',data: [],borderColor: 'rgba(75, 192, 192, 1)',borderWidth: 2,fill: false,}]}, options: {scales: {x: {type: 'time',time: {unit: 'minute'}},y: {}}}
+        });
+    </script>
+</body>
+</html>

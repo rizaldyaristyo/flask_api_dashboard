@@ -99,14 +99,47 @@
                         </div>
                     </div>
                 </nav>
-                <canvas id="chartnya" style="width:100%;max-width:70vw"></canvas>
+                <style>
+                    .main-dash-body {
+                        display: flex;
+                        max-height: 100%;
+                    }
+                    .sub-dash-body {
+                        width:100%;
+                        max-width:45vw;
+                    }
+                    .sub-dash-body2{
+
+                    }
+                    @media only screen and (max-width: 1060px) {
+                        .main-dash-body {
+                            flex-direction: column;
+                        }
+                        .sub-dash-body {
+                            min-width: 20vw;
+                            max-width: 65vw;
+                        }
+                        .sub-dash-body2{
+                            
+                        }
+                    }
+                </style>
+                <div class="main-dash-body">
+                    <div class="sub-dash-body">
+                        <canvas id="chart1nya"></canvas>
+                        <canvas id="chart2nya"></canvas>
+                    </div>
+                    <div class="sub-dash-body2">
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </body>
     <script>
         function updateGraph() {
             var baseUrl = window.location.protocol + "//" + window.location.host + "/";
-            fetch(baseUrl.concat("get_data"), {
+            fetch(baseUrl.concat("get_data?trash_can_id=1"), {
                 method: "GET",
             })
             .then(response => response.json())
@@ -114,47 +147,40 @@
                 const labels = data.data_date;
                 const gasPPMs = data.gas_ppms;
                 const trashCapacities = data.trash_capacities;
-                chartnya.data.labels = labels;
-                chartnya.data.datasets[0].data = gasPPMs;
-                chartnya.data.datasets[1].data = trashCapacities;
+                chart1nya.data.labels = labels;
+                chart1nya.data.datasets[0].data = gasPPMs;
+                chart1nya.data.datasets[1].data = trashCapacities;
 
                 // Update the chart
-                chartnya.update();
+                chart1nya.update();
+            });
+
+            fetch(baseUrl.concat("get_data?trash_can_id=2"), {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.data_date;
+                const gasPPMs = data.gas_ppms;
+                const trashCapacities = data.trash_capacities;
+                chart2nya.data.labels = labels;
+                chart2nya.data.datasets[0].data = gasPPMs;
+                chart2nya.data.datasets[1].data = trashCapacities;
+
+                // Update the chart
+                chart2nya.update();
             });
         }
-
         updateGraph();
         setInterval(updateGraph, 2000);
-        var ctx = document.getElementById('chartnya').getContext('2d');
-        var chartnya = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Ammonia Gas (ppm)',
-                    data: [],
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2,
-                    fill: false,
-                }, {
-                    label: 'Trash Capacities (%)',
-                    data: [],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    fill: false,
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute'
-                        }
-                    },
-                    y: {}
-                }
-            }
+
+        var ctx1 = document.getElementById('chart1nya').getContext('2d');
+        var chart1nya = new Chart(ctx1, {
+            type: 'line', data: {labels: [], datasets: [{ label: 'Ammonia Gas (ppm)', data: [], borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 2, fill: false,}, {label: 'Trash Capacities (%)',data: [],borderColor: 'rgba(75, 192, 192, 1)',borderWidth: 2,fill: false,}]}, options: {scales: {x: {type: 'time',time: {unit: 'minute'}},y: {}}}
+        });
+        var ctx2 = document.getElementById('chart2nya').getContext('2d');
+        var chart2nya = new Chart(ctx2, {
+            type: 'line', data: {labels: [], datasets: [{ label: 'Ammonia Gas (ppm)', data: [], borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 2, fill: false,}, {label: 'Trash Capacities (%)',data: [],borderColor: 'rgba(75, 192, 192, 1)',borderWidth: 2,fill: false,}]}, options: {scales: {x: {type: 'time',time: {unit: 'minute'}},y: {}}}
         });
     </script>
 </html>
